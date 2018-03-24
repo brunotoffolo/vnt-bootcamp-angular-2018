@@ -1,0 +1,6 @@
+<li class="list-group-item" [ngClass]="{ 'disabled' : listItem.disabled }">
+  <span>{{ listItem.name }}</span>
+  <span class="float-right" *ngIf="!listItem.disabled">
+    <span class="badge badge-danger">X</span>
+  </span>
+</li>

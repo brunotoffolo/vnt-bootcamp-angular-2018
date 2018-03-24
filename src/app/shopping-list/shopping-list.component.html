@@ -1,0 +1,13 @@
+<div class="page-header">
+  <h2>My Shopping Cart</h2>
+</div>
+<div class="input-group my-3">
+  <input type="text" class="form-control" placeholder="Item name">
+  <button class="btn btn-primary" type="button">Add</button>
+</div>
+<ul class="list-group">
+    <app-shopping-list-item
+      *ngFor="let item of listItems"
+      [item]="item">
+    </app-shopping-list-item>
+</ul>
