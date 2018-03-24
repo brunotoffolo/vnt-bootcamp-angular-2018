@@ -1,3 +1,4 @@
+import { ShoppingListService } from '../../shopping-list.service';
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
@@ -9,10 +10,17 @@ export class ShoppingListItemComponent implements OnInit {
 
   @Input("item") private listItem: any;
 
-  constructor() { }
+  constructor(private shoppingListService: ShoppingListService) { }
 
   ngOnInit() {
-    console.log(this.listItem);
+  }
+
+  private remove(): void {
+    this.shoppingListService.remove(this.listItem);
+  }
+
+  private cross(): void {
+    this.shoppingListService.cross(this.listItem);
   }
 
 }

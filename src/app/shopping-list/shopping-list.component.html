@@ -2,8 +2,8 @@
   <h2>My Shopping Cart</h2>
 </div>
 <div class="input-group my-3">
-  <input type="text" class="form-control" placeholder="Item name">
-  <button class="btn btn-primary" type="button">Add</button>
+  <input type="text" class="form-control" placeholder="Item name" [(ngModel)]="itemToAdd">
+  <button class="btn btn-primary" type="button" (click)="addItem()" [disabled]="itemToAdd.length === 0">Add</button>
 </div>
 <ul class="list-group">
     <app-shopping-list-item
