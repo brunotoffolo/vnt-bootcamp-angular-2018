@@ -17,27 +17,12 @@ export class ShoppingListItemComponent implements OnInit {
   ngOnInit() {}
 
   private remove(): void {
-    // this.shoppingListService.remove(this.listItem);
-
-    this.shoppingListService.removeHttp(this.listItem).subscribe(
-      res => {
-        console.log('O item foi excluído com sucesso!');
-        this.deleted = true;
-      },
-      err => { console.error('Não foi possível excluir o item.'); }
-    );
+    this.shoppingListService.deleteItem(this.listItem['key']);
   }
 
   private cross(): void {
-
     this.listItem.disabled = true;
-
-    this.shoppingListService.editHttp(this.listItem).subscribe(
-      res => {
-        console.log('O item foi alterado com sucesso!');
-      },
-      err => { console.error('Não foi possível alterar o item.'); }
-    );
+    this.shoppingListService.updateItem(this.listItem['key'], this.listItem);
   }
 
 }

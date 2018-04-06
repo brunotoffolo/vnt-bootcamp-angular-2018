@@ -1,6 +1,5 @@
 export class Item {
 
-  pushID: string = '';
   name: string = '';
   disabled: boolean = false;
   ammount: number = 1;

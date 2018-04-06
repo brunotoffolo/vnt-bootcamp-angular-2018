@@ -3,11 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
 import { Item } from './class/item';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 
 @Injectable()
 export class ShoppingListService {
 
   private listItems: Array<any>;
+  itemsRef: AngularFireList<any>;
+  public listItemsFirebase: Observable<any[]>;
 
   get items(): Array<any> {
     return this.listItems;
@@ -17,59 +20,51 @@ export class ShoppingListService {
     this.listItems = value;
   }
 
-  constructor(private _httpClient: HttpClient) {
-    // this.listItems = [{
-    //   name: 'Bread',
-    //   disabled: false
-    // },{
-    //   name: 'Butter',
-    //   disabled: false
-    // },{
-    //   name: 'Coffee',
-    //   disabled: false
-    // },{
-    //   name: 'Cookies',
-    //   disabled: true
-    // }];
-  }
+  constructor(private _httpClient: HttpClient, private db: AngularFireDatabase) {
 
-  public findAllHttp(): Observable<Object> {
-    return this._httpClient.get(environment.firebase.databaseURL + '/items.json');
-  }
+    this.itemsRef = db.list('items', ref => ref.orderByChild('disabled'));
 
-  public findAll(): Array<any> {
-    return this.listItems;
+    // Use snapshotChanges().map() to store the key
+    this.listItemsFirebase = this.itemsRef.snapshotChanges().map(changes => {
+
+      console.log(changes);
+
+      return changes.map(c => {
+        console.log(c.payload.val());
+        return ({ key: c.payload.key, ...c.payload.val() });
+       // { key: c.payload.key, name: c.payload.val()['name'], disabled: c.payload.val()['disabled'], ammount: c.payload.val()['ammount'] }
+      });
+    });
   }
 
   public add(item: any): void {
-    let duplicate = this.listItems.filter(i => i.name === item.name);
+    let subscription = this.listItemsFirebase.subscribe(list => {
+      let duplicate = list.filter(i => i.name === item.name)[0];
 
-    if (duplicate.length > 0) {
-      duplicate[0].disabled = false;
-      return;
-    }
+      if (duplicate) {
+        duplicate.disabled = false;
+        this.updateItem(duplicate.key, duplicate);
+      } else {
+        this.itemsRef.push(item);
+      }
 
-    let newItem = {
-      name: item.name,
-      disabled: item.disabled
-    };
-    this.listItems.unshift(newItem);
+      subscription.unsubscribe();
+    });
   }
 
-  public addHttp(item: Item): Observable<Object> {
-    return this._httpClient.post(environment.firebase.databaseURL + '/items.json', item);
+  updateItem(key: string, item: Item) {
+    this.itemsRef.update(key, item).then(res => console.log('Item alterado com sucesso!') );
+
   }
 
-  public remove(item: any): void {
-    let index = this.listItems.indexOf(item);
-    if (index >= 0) {
-      this.listItems.splice(index, 1);
-    }
+  deleteItem(key: string) {
+    this.itemsRef.remove(key);
   }
 
-  public removeHttp(item: Item): Observable<Object> {
-    return this._httpClient.delete(`${environment.firebase.databaseURL}/items/${item.pushID}.json`);
+  deleteEverything() {
+    this.itemsRef.remove();
   }
+
 
   public cross(item: any): void {
     let index = this.listItems.indexOf(item);
@@ -77,10 +72,6 @@ export class ShoppingListService {
       this.listItems[index].disabled = true;
     }
     this.reorderList();
-  }
-
-  public editHttp(item: any): Observable<Object> {
-    return this._httpClient.put(`${environment.firebase.databaseURL}/items/${item.pushID}.json`, item);
   }
 
   private reorderList(): void {

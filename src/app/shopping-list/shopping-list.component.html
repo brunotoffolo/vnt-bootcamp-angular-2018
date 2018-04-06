@@ -3,15 +3,11 @@
 </div>
 <form>
   <div class="input-group my-3">
-
-      <input type="text" name="name" class="form-control" placeholder="Item name" [(ngModel)]="itemToAdd">
-      <button class="btn btn-primary" type="submit" (click)="addItem()" [disabled]="itemToAdd.length === 0">Add</button>
-
+    <input type="text" name="name" class="form-control" placeholder="Item name" [(ngModel)]="itemToAdd">
+    <button class="btn btn-primary" type="submit" (click)="addItem()" [disabled]="itemToAdd.length === 0">Add</button>
   </div>
 </form>
 <ul class="list-group">
-    <app-shopping-list-item
-      *ngFor="let item of listItems"
-      [item]="item">
-    </app-shopping-list-item>
+  <app-shopping-list-item *ngFor="let item of listItems | async" [item]="item">
+  </app-shopping-list-item>
 </ul>
