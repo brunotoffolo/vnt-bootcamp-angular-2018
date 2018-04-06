@@ -1,5 +1,6 @@
 import { ShoppingListService } from '../../shopping-list.service';
 import { Component, Input, OnInit } from '@angular/core';
+import { Item } from '../../class/item';
 
 @Component({
   selector: 'app-shopping-list-item',
@@ -8,19 +9,35 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ShoppingListItemComponent implements OnInit {
 
-  @Input("item") private listItem: any;
+  @Input("item") private listItem: Item;
+  public deleted: boolean = false;
 
   constructor(private shoppingListService: ShoppingListService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   private remove(): void {
-    this.shoppingListService.remove(this.listItem);
+    // this.shoppingListService.remove(this.listItem);
+
+    this.shoppingListService.removeHttp(this.listItem).subscribe(
+      res => {
+        console.log('O item foi excluído com sucesso!');
+        this.deleted = true;
+      },
+      err => { console.error('Não foi possível excluir o item.'); }
+    );
   }
 
   private cross(): void {
-    this.shoppingListService.cross(this.listItem);
+
+    this.listItem.disabled = true;
+
+    this.shoppingListService.editHttp(this.listItem).subscribe(
+      res => {
+        console.log('O item foi alterado com sucesso!');
+      },
+      err => { console.error('Não foi possível alterar o item.'); }
+    );
   }
 
 }

@@ -1,24 +1,40 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { environment } from '../environments/environment';
+import { Item } from './class/item';
 
 @Injectable()
 export class ShoppingListService {
 
   private listItems: Array<any>;
 
-  constructor() {
-    this.listItems = [{
-      name: 'Bread',
-      disabled: false
-    },{
-      name: 'Butter',
-      disabled: false
-    },{
-      name: 'Coffee',
-      disabled: false
-    },{
-      name: 'Cookies',
-      disabled: true
-    }];
+  get items(): Array<any> {
+    return this.listItems;
+  }
+
+  set items(value: Array<any>) {
+    this.listItems = value;
+  }
+
+  constructor(private _httpClient: HttpClient) {
+    // this.listItems = [{
+    //   name: 'Bread',
+    //   disabled: false
+    // },{
+    //   name: 'Butter',
+    //   disabled: false
+    // },{
+    //   name: 'Coffee',
+    //   disabled: false
+    // },{
+    //   name: 'Cookies',
+    //   disabled: true
+    // }];
+  }
+
+  public findAllHttp(): Observable<Object> {
+    return this._httpClient.get(environment.firebase.databaseURL + '/items.json');
   }
 
   public findAll(): Array<any> {
@@ -40,11 +56,19 @@ export class ShoppingListService {
     this.listItems.unshift(newItem);
   }
 
+  public addHttp(item: Item): Observable<Object> {
+    return this._httpClient.post(environment.firebase.databaseURL + '/items.json', item);
+  }
+
   public remove(item: any): void {
     let index = this.listItems.indexOf(item);
     if (index >= 0) {
       this.listItems.splice(index, 1);
     }
+  }
+
+  public removeHttp(item: Item): Observable<Object> {
+    return this._httpClient.delete(`${environment.firebase.databaseURL}/items/${item.pushID}.json`);
   }
 
   public cross(item: any): void {
@@ -53,6 +77,10 @@ export class ShoppingListService {
       this.listItems[index].disabled = true;
     }
     this.reorderList();
+  }
+
+  public editHttp(item: any): Observable<Object> {
+    return this._httpClient.put(`${environment.firebase.databaseURL}/items/${item.pushID}.json`, item);
   }
 
   private reorderList(): void {

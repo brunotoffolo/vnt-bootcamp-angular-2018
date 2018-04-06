@@ -11,6 +11,7 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { ShoppingListItemComponent } from './shopping-list/shopping-list-item/shopping-list-item.component';
 import { ShoppingListService } from './shopping-list.service';
 import { AboutComponent } from './about/about.component';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { AboutComponent } from './about/about.component';
   imports: [
     BrowserModule,
     FormsModule,
+    HttpClientModule,
     RouterModule.forRoot(APP_ROUTES)
   ],
   providers: [
