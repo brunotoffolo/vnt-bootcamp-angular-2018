@@ -1,7 +1,7 @@
 <li *ngIf="!deleted" class="list-group-item" [ngClass]="{ 'disabled' : listItem.disabled }">
   <span>{{ listItem.name }}</span>
   <span class="float-right" *ngIf="!listItem.disabled">
-    <span class="badge badge-danger" (click)="remove()">Remover</span>
+    <span class="badge badge-danger" (click)="remove()">Remove</span>
     <span class="badge badge-success" (click)="cross()">Ok</span>
   </span>
 </li>
